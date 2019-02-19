@@ -1,0 +1,90 @@
+/**
+ * Copyright (c) xueduo 2009-2015 corporation.  All rights reserved
+ */
+package $package;
+
+
+import com.xuehuiit.jee.common.db.BaseDbBean;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.HashMap;
+import java.util.Map;
+/**
+ * @author <a href="fx19800215@163.com">robert.feng</a> 
+ *
+ */
+public class $classname extends BaseDbBean {
+
+	
+	public  String TABLE_NAME = "${tablename}";
+	
+
+#foreach($column in $columns)	
+	private ${codegen.getJavaType(${column.datetype})} ${column.columns}; // ${column.commit}
+#end	
+	
+	/**** 
+	 * table column value map  
+	 */
+	public Map<String,Object> getValueMap(){
+		
+		Map<String,Object> map = new HashMap<String,Object>();
+		#foreach($column in $columns)	
+		map.put("${column.columns}",${codegen.getProGetMethordName(${column.columns})}());	
+		#end
+		return map;
+	}
+	
+	
+	
+	
+#foreach($column in $columns)		
+	public ${codegen.getJavaType(${column.datetype})}  ${codegen.getProGetMethordName(${column.columns})} () {
+		return ${column.columns};
+	}
+
+	public void ${codegen.getProSetMethordName(${column.columns})} (${codegen.getJavaType(${column.datetype})}  ${column.columns}) {
+		this.${column.columns} = ${column.columns};
+	}
+
+#end
+	
+	/* (non-Javadoc)
+	 * @see com.xuehuiit.jee.common.db.BaseDbBean#getInsertParms()
+	 */
+	@Override
+	public Object[] getInsertParms() {
+		
+		 Object values[] = {  $columnst };
+		return values;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.xuehuiit.jee.common.db.BaseDbBean#getInsertsql()
+	 */
+	@Override
+	public String getInsertsql() {
+		return "insert into " +TABLE_NAME+"(  $columnst ) values ($columns_ww)";
+	}
+
+	/* (non-Javadoc)
+	 * @see com.xuehuiit.jee.common.db.BaseDbBean#getTableName()
+	 */
+	@Override
+	public String getTableName() {
+		return TABLE_NAME;
+	}
+
+	
+	
+	
+	public String toString() {
+		return new ToStringBuilder(this).
+#foreach($column in $columns)			
+		append("${column.columns}", ${column.columns}).
+#end		
+		toString();
+	}
+
+	
+	
+}
